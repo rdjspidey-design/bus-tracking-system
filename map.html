@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bus Live Location</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <style>
+        #map{
+            height:500px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<h2>Live Bus Location 🚌</h2>
+
+<div id="map"></div>
+
+<script>
+
+var map = L.map('map').setView([11.0, 78.0], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© OpenStreetMap'
+}).addTo(map);
+
+var busIcon = L.icon({
+iconUrl:"/static/bus.png",
+iconSize:[40,40]
+})
+
+var marker = L.marker([11,78],{icon:busIcon}).addTo(map)
+
+function updateLocation(){
+
+fetch('/get_location')
+.then(response => response.json())
+.then(data => {
+
+    var lat = data.lat;
+    var lng = data.lng;
+
+    marker.setLatLng([lat,lng]);
+
+    map.setView([lat,lng]);
+
+});
+
+}
+
+setInterval(updateLocation,3000);
+
+</script>
+
+</body>
+</html>

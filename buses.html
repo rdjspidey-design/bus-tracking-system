@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bus List</title>
+</head>
+
+<body>
+
+<h2>Available Buses</h2>
+
+<table border="1">
+
+<tr>
+<th>ID</th>
+<th>Bus Number</th>
+<th>Route ID</th>
+</tr>
+
+{% for bus in buses %}
+
+<tr>
+<td>{{ bus[0] }}</td>
+<td>{{ bus[1] }}</td>
+<td>{{ bus[2] }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+<br>
+<a href="/">Back to Admin</a>
+
+</body>
+</html>

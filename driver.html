@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Driver Tracking</title>
+</head>
+<body class="container">
+
+<h2>Driver Tracking Active 🚍</h2>
+
+<p id="status">Checking GPS...</p>
+
+<button class="btn btn-success" onclick="startTracking()">Start Tracking</button>
+
+<script>
+
+function startTracking(){
+
+if (!navigator.geolocation){
+    document.getElementById("status").innerHTML = "GPS not supported";
+    return;
+}
+
+navigator.geolocation.watchPosition(
+
+function(position){
+
+    var lat = position.coords.latitude;
+    var lng = position.coords.longitude;
+
+    document.getElementById("status").innerHTML =
+    "Latitude: " + lat + "<br>Longitude: " + lng;
+
+    fetch('/update_location', {
+        method:'POST',
+        headers:{
+            'Content-Type':'application/x-www-form-urlencoded'
+        },
+        body:"bus_id=1&latitude="+lat+"&longitude="+lng
+    });
+
+},
+
+function(error){
+
+document.getElementById("status").innerHTML =
+"GPS Error : " + error.message;
+
+},
+
+{
+enableHighAccuracy:true,
+timeout:10000,
+maximumAge:0
+}
+
+);
+
+}
+
+</script>
+
+</body>
+</html>

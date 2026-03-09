@@ -54,6 +54,13 @@ def init_db():
     conn.close()
 
 
+# ---------------- HOME PAGE ----------------
+
+@app.route('/')
+def home_page():
+    return render_template("home.html")
+
+
 # ---------------- ADMIN LOGIN ----------------
 
 @app.route('/admin-login', methods=['GET','POST'])
@@ -74,34 +81,13 @@ def admin_login():
     return render_template("admin_login.html")
 
 
-# ---------------- DRIVER LOGIN ----------------
+# ---------------- ADMIN DASHBOARD ----------------
 
-@app.route('/driver-login', methods=['GET','POST'])
-def driver_login():
-
-    if request.method == 'POST':
-
-        password = request.form['password']
-
-        if password == "driver123":
-            session['driver'] = True
-            return redirect('/driver')
-
-        else:
-            return "Invalid Driver Login"
-
-    return render_template("driver_login.html")
-
-
-# ---------------- ADMIN HOME ----------------
-
-@app.route('/admin')
-def home():
+@app.route('/admin', methods=['GET','POST'])
+def admin():
 
     if 'admin' not in session:
         return redirect('/admin-login')
-
-    # existing admin code
 
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
@@ -132,7 +118,7 @@ def home():
 
             conn.commit()
 
-        return redirect('/')
+        return redirect('/admin')
 
     cursor.execute("SELECT * FROM routes")
     routes = cursor.fetchall()
@@ -198,6 +184,25 @@ def dashboard():
         )
 
     return redirect('/login')
+
+
+# ---------------- DRIVER LOGIN ----------------
+
+@app.route('/driver-login', methods=['GET','POST'])
+def driver_login():
+
+    if request.method == 'POST':
+
+        password = request.form['password']
+
+        if password == "driver123":
+            session['driver'] = True
+            return redirect('/driver')
+
+        else:
+            return "Invalid Driver Login"
+
+    return render_template("driver_login.html")
 
 
 # ---------------- DRIVER PAGE ----------------
@@ -300,7 +305,7 @@ def buses():
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect('/admin-login')
+    return redirect('/')
 
 
 # ---------------- MAIN ----------------
@@ -308,4 +313,3 @@ def logout():
 if __name__ == "__main__":
     init_db()
     app.run(host="0.0.0.0", debug=True)
-

@@ -66,7 +66,7 @@ def admin_login():
 
         if username == "admin" and password == "admin123":
             session['admin'] = True
-            return redirect('/')
+            return redirect('/admin')
 
         else:
             return "Invalid Admin Login"
@@ -95,11 +95,13 @@ def driver_login():
 
 # ---------------- ADMIN HOME ----------------
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/admin')
 def home():
 
     if 'admin' not in session:
         return redirect('/admin-login')
+
+    # existing admin code
 
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
@@ -306,3 +308,4 @@ def logout():
 if __name__ == "__main__":
     init_db()
     app.run(host="0.0.0.0", debug=True)
+

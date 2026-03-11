@@ -2,41 +2,68 @@
 <html>
 <head>
 <title>Driver Tracking</title>
+
+<style>
+body{
+font-family: Arial;
+text-align:center;
+margin-top:40px;
+}
+
+button{
+padding:10px 20px;
+font-size:16px;
+background-color:green;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+#status{
+margin-top:20px;
+font-size:18px;
+}
+</style>
+
 </head>
-<body class="container">
+
+<body>
 
 <h2>Driver Tracking Active 🚍</h2>
 
 <p id="status">Checking GPS...</p>
 
-<button class="btn btn-success" onclick="startTracking()">Start Tracking</button>
+<button onclick="startTracking()">Start Tracking</button>
 
 <script>
+
+var watchID = null;
 
 function startTracking(){
 
 if (!navigator.geolocation){
-    document.getElementById("status").innerHTML = "GPS not supported";
-    return;
+
+document.getElementById("status").innerHTML = "GPS not supported in this browser";
+
+return;
+
 }
 
-navigator.geolocation.watchPosition(
+watchID = navigator.geolocation.watchPosition(
 
 function(position){
 
-    var lat = position.coords.latitude;
-    var lng = position.coords.longitude;
+var lat = position.coords.latitude;
+var lng = position.coords.longitude;
+var accuracy = position.coords.accuracy;
 
-    document.getElementById("status").innerHTML =
-    "Latitude: " + lat + "<br>Longitude: " + lng;
+document.getElementById("status").innerHTML =
+"Latitude : " + lat + "<br>" +
+"Longitude : " + lng + "<br>" +
+"Accuracy : " + accuracy + " meters";
 
-    fetch('/update_location', {
-        method:'POST',
-        headers:{
-            'Content-Type':'application/x-www-form-urlencoded'
-        },
-        body:"bus_id=1&latitude="+lat+"&longitude="+lng
-    });
+sendLocation(lat,lng);
 
 },
 
@@ -54,6 +81,24 @@ maximumAge:0
 }
 
 );
+
+}
+
+function sendLocation(lat,lng){
+
+fetch('/update_location',{
+
+method:'POST',
+
+headers:{
+'Content-Type':'application/x-www-form-urlencoded'
+},
+
+body:"bus_id=1&latitude="+lat+"&longitude="+lng
+
+})
+.then(response => console.log("Location Sent"))
+.catch(error => console.log("Error sending location"));
 
 }
 

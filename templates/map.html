@@ -1,58 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bus Live Location</title>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<title>Bus Live Location</title>
 
-    <style>
-        #map{
-            height:500px;
-        }
-    </style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+}
+
+#map{
+height:100vh;
+width:100%;
+}
+
+</style>
 
 </head>
 
 <body>
 
-<h2>Live Bus Location 🚌</h2>
+<h2 style="text-align:center">Live Bus Location 🚍</h2>
 
 <div id="map"></div>
 
 <script>
 
-var map = L.map('map').setView([11.0, 78.0], 13);
+// Initial location
+var lat = 11.0168;
+var lng = 76.9558;
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    attribution:'© OpenStreetMap'
+// Create map
+var map = L.map('map').setView([lat, lng], 15);
+
+// Load map tiles
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+maxZoom: 19
 }).addTo(map);
 
-var busIcon = L.icon({
-iconUrl:"/static/bus.png",
-iconSize:[40,40]
-})
+// Create marker
+var marker = L.marker([lat, lng]).addTo(map);
 
-var marker = L.marker([11,78],{icon:busIcon}).addTo(map)
+// Function to update bus location
+function updateBusLocation(){
 
-function updateLocation(){
+fetch("/get_location")
 
-fetch('/get_location')
 .then(response => response.json())
+
 .then(data => {
 
-    var lat = data.lat;
-    var lng = data.lng;
+var newLat = parseFloat(data.lat);
+var newLng = parseFloat(data.lng);
 
-    marker.setLatLng([lat,lng]);
+// Move marker
+marker.setLatLng([newLat,newLng]);
 
-    map.setView([lat,lng]);
-
+// Smooth map follow
+map.panTo([newLat,newLng],{
+animate:true,
+duration:1
 });
+
+})
+
+.catch(error => console.log("Location error"));
 
 }
 
-setInterval(updateLocation,3000);
+// Update every 1 second
+setInterval(updateBusLocation,1000);
 
 </script>
 

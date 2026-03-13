@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, jsonify
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -239,7 +239,7 @@ def update_location():
     return "OK"
 
 
-# ---------------- GET BUS LOCATION ----------------
+# ---------------- GET BUS LOCATION (MULTIPLE BUS SUPPORT) ----------------
 
 @app.route('/get_location')
 def get_location():
@@ -248,40 +248,35 @@ def get_location():
     cursor = conn.cursor()
 
     cursor.execute("""
-    SELECT latitude, longitude
+    SELECT bus_id, latitude, longitude
     FROM locations
-    ORDER BY id DESC
-    LIMIT 1
+    WHERE id IN (
+        SELECT MAX(id)
+        FROM locations
+        GROUP BY bus_id
+    )
     """)
 
-    data = cursor.fetchone()
+    data = cursor.fetchall()
     conn.close()
 
-    if data:
-        return {"lat": data[0], "lng": data[1]}
-    else:
-        return {"lat": 0, "lng": 0}
+    buses = []
+
+    for row in data:
+        buses.append({
+            "bus_id": row[0],
+            "lat": float(row[1]),
+            "lng": float(row[2])
+        })
+
+    return jsonify({"buses": buses})
 
 
 # ---------------- MAP PAGE ----------------
 
 @app.route('/map')
 def map():
-
-    conn = sqlite3.connect("database.db")
-    cursor = conn.cursor()
-
-    cursor.execute("""
-    SELECT latitude, longitude
-    FROM locations
-    ORDER BY id DESC
-    LIMIT 1
-    """)
-
-    location = cursor.fetchone()
-    conn.close()
-
-    return render_template("map.html", location=location)
+    return render_template("map.html")
 
 
 # ---------------- BUS LIST ----------------

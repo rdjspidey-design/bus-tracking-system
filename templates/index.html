@@ -1,69 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>College Bus Tracking - Admin</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<title>Admin</title>
+<style>
+body{font-family:Arial;background:#1e3c72;color:white;text-align:center}
+form{margin:20px}
+input,select,button{padding:10px;margin:5px}
+</style>
 </head>
-<body class="container mt-4">    
-<h1>🚍 College Bus Tracking System (Admin)</h1>
+<body>
 
-<hr>
+<h1>Admin Panel 🚍</h1>
 
-<h2>Add Route</h2>
 <form method="POST">
-    <input type="text" name="route_name" placeholder="Enter Route Name" required>
-    <button type="submit">Add Route</button>
+<input name="route_name" placeholder="Route Name">
+<button>Add Route</button>
 </form>
 
-<hr>
-
-<h2>Add Bus</h2>
 <form method="POST">
-    <input type="text" name="bus_number" placeholder="Enter Bus Number" required>
-
-    <select name="route_id" required>
-        <option value="">Select Route</option>
-        {% for route in routes %}
-            <option value="{{ route[0] }}">{{ route[1] }}</option>
-        {% endfor %}
-    </select>
-
-    <button type="submit">Add Bus</button>
+<input name="bus_number" placeholder="Bus Number">
+<select name="route_id">
+{% for r in routes %}
+<option value="{{r[0]}}">{{r[1]}}</option>
+{% endfor %}
+</select>
+<button>Add Bus</button>
 </form>
 
-<hr>
-
-<h2>Add Student</h2>
 <form method="POST">
-    <input type="text" name="student_name" placeholder="Student Name" required>
-    <input type="text" name="register_number" placeholder="Register Number" required>
-    <input type="password" name="password" placeholder="Password" required>
-
-    <select name="route_id" required>
-        <option value="">Select Route</option>
-        {% for route in routes %}
-            <option value="{{ route[0] }}">{{ route[1] }}</option>
-        {% endfor %}
-    </select>
-
-    <button type="submit">Add Student</button>
+<input name="student_name" placeholder="Student Name">
+<input name="register_number" placeholder="Reg No">
+<input name="password" placeholder="Password">
+<select name="bus_id">
+{% for b in buses %}
+<option value="{{b[0]}}">{{b[1]}}</option>
+{% endfor %}
+</select>
+<button>Add Student</button>
 </form>
 
-<hr>
-
-<h2>Bus List</h2>
-<ul>
-    {% for bus in buses %}
-        <li>Bus {{ bus[0] }} - Route: {{ bus[1] }}</li>
-    {% endfor %}
-</ul>
-
-<br>
-<a href="/login">Go to Student Login</a>
-
-<br>
-<a href="/buses">View All Buses</a>
+<form method="POST">
+<input name="driver_name" placeholder="Driver Name">
+<input name="password" placeholder="Password">
+<select name="bus_id">
+{% for b in buses %}
+<option value="{{b[0]}}">{{b[1]}}</option>
+{% endfor %}
+</select>
+<button>Add Driver</button>
+</form>
 
 </body>
 </html>

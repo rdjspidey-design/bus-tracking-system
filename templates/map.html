@@ -1,87 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-<title>Bus Live Tracking</title>
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-<style>
-
-body{
-margin:0;
-font-family:Arial;
-}
-
-#map{
-height:100vh;
-width:100%;
-}
-
-</style>
-
+<style>#map{height:100vh}</style>
 </head>
-
 <body>
-
-<h2 style="text-align:center">Live Bus Tracking 🚍</h2>
 
 <div id="map"></div>
 
 <script>
 
-// Initial map location
-var map = L.map('map').setView([11.0168, 76.9558], 14);
+var map = L.map('map').setView([11,76],13);
 
-// Map tiles
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-maxZoom:19
-}).addTo(map);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-// Store markers for multiple buses
-var markers = {};
+var marker;
 
-// Update bus locations
-function updateBusLocation(){
-
+function update(){
 fetch("/get_location")
-
-.then(response => response.json())
-
-.then(data => {
-
-data.buses.forEach(function(bus){
-
-var lat = parseFloat(bus.lat);
-var lng = parseFloat(bus.lng);
-var id = bus.bus_id;
-
-// If marker exists update location
-if(markers[id]){
-
-markers[id].setLatLng([lat,lng]);
-
-}else{
-
-// Create new marker
-markers[id] = L.marker([lat,lng]).addTo(map)
-.bindPopup("Bus ID : "+id);
-
+.then(r=>r.json())
+.then(d=>{
+if(d.lat){
+if(marker){marker.setLatLng([d.lat,d.lng])}
+else{marker=L.marker([d.lat,d.lng]).addTo(map)}
+map.setView([d.lat,d.lng],15)
 }
-
-});
-
 })
-
-.catch(error => console.log("Location error"));
-
 }
 
-// Refresh every 1 second
-setInterval(updateBusLocation,1000);
+setInterval(update,2000);
 
 </script>
 

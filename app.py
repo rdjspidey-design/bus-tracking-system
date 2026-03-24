@@ -267,6 +267,25 @@ def get_location():
 def map():
     return render_template("map.html")
 
+# ---------------- DRIVER LIST ----------------
+
+@app.route('/drivers')
+def drivers():
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT drivers.name, buses.bus_number
+    FROM drivers
+    LEFT JOIN buses ON drivers.bus_id = buses.id
+    """)
+
+    data = cursor.fetchall()
+    conn.close()
+
+    return render_template("drivers.html", drivers=data)
+
 # ---------------- STUDENT LIST ----------------
 
 @app.route('/students')

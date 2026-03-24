@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Driver List</title>
+</head>
+
+<body>
+
+<h2>Driver List</h2>
+
+<table border="1">
+
+<tr>
+<th>Driver Name</th>
+<th>Bus</th>
+</tr>
+
+{% for d in drivers %}
+<tr>
+<td>{{ d[0] }}</td>
+<td>{{ d[1] if d[1] else "Not Assigned" }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+<br>
+<a href="/admin">Back</a>
+
+</body>
+</html>

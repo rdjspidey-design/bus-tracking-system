@@ -8,35 +8,19 @@ app.secret_key = "bus_tracking_secret_2026"
 # ---------------- DATABASE ----------------
 
 def init_db():
-    conn = sqlite3.connect("bus_new.db")
+    conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
 
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS routes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        route_name TEXT
-    )
-    """)
+    # DELETE OLD TABLES (IMPORTANT)
+    cursor.execute("DROP TABLE IF EXISTS students")
+    cursor.execute("DROP TABLE IF EXISTS drivers")
+    cursor.execute("DROP TABLE IF EXISTS buses")
+    cursor.execute("DROP TABLE IF EXISTS routes")
+    cursor.execute("DROP TABLE IF EXISTS locations")
 
+    # CREATE NEW TABLES
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS buses (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        bus_number TEXT,
-        route_id INTEGER
-    )
-    """)
-
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS drivers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        password TEXT,
-        bus_id INTEGER
-    )
-    """)
-
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS students (
+    CREATE TABLE students (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         register_number TEXT,
@@ -46,7 +30,31 @@ def init_db():
     """)
 
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS locations (
+    CREATE TABLE drivers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        password TEXT,
+        bus_id INTEGER
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE routes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        route_name TEXT
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE buses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        bus_number TEXT,
+        route_id INTEGER
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE locations (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         bus_id INTEGER,
         latitude TEXT,

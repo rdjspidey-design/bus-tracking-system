@@ -73,10 +73,10 @@ def admin_login():
             session['admin']=True
             return redirect('/admin')
         else:
-            return "Invalid Login"
+            return "Invalid Login ❌"
     return render_template("admin_login.html")
 
-# ---------------- ADMIN ----------------
+# ---------------- ADMIN PANEL ----------------
 
 @app.route('/admin', methods=['GET','POST'])
 def admin():
@@ -88,36 +88,51 @@ def admin():
 
     if request.method == 'POST':
 
-        if 'route_name' in request.form:
-            cursor.execute("INSERT INTO routes(route_name) VALUES(?)",
-                           (request.form['route_name'],))
+        try:
+            # ADD ROUTE
+            if 'route_name' in request.form and request.form['route_name']:
+                cursor.execute("INSERT INTO routes(route_name) VALUES(?)",
+                               (request.form['route_name'],))
 
-        if 'bus_number' in request.form:
-            cursor.execute("INSERT INTO buses(bus_number,route_id) VALUES(?,?)",
-                           (request.form['bus_number'],request.form['route_id']))
+            # ADD BUS
+            if 'bus_number' in request.form and request.form['bus_number']:
+                cursor.execute("INSERT INTO buses(bus_number,route_id) VALUES(?,?)",
+                               (request.form['bus_number'],request.form['route_id']))
 
-        if 'student_name' in request.form:
-            cursor.execute("""
-            INSERT INTO students(name,register_number,password,bus_id)
-            VALUES(?,?,?,?)
-            """,(
-                request.form['student_name'],
-                request.form['register_number'],
-                generate_password_hash(request.form['password']),
-                request.form['bus_id']
-            ))
+            # ADD STUDENT
+            if 'student_name' in request.form:
+                name = request.form['student_name']
+                reg = request.form['register_number']
+                password = generate_password_hash(request.form['password'])
+                bus_id = request.form.get('bus_id')
 
-        if 'driver_name' in request.form:
-            cursor.execute("""
-            INSERT INTO drivers(name,password,bus_id)
-            VALUES(?,?,?)
-            """,(
-                request.form['driver_name'],
-                generate_password_hash(request.form['password']),
-                request.form['bus_id']
-            ))
+                if not bus_id:
+                    return "❌ Select Bus for student"
 
-        conn.commit()
+                cursor.execute("""
+                INSERT INTO students(name,register_number,password,bus_id)
+                VALUES(?,?,?,?)
+                """,(name,reg,password,bus_id))
+
+            # ADD DRIVER
+            if 'driver_name' in request.form:
+                name = request.form['driver_name']
+                password = generate_password_hash(request.form['password'])
+                bus_id = request.form.get('bus_id')
+
+                if not bus_id:
+                    return "❌ Select Bus for driver"
+
+                cursor.execute("""
+                INSERT INTO drivers(name,password,bus_id)
+                VALUES(?,?,?)
+                """,(name,password,bus_id))
+
+            conn.commit()
+
+        except Exception as e:
+            return f"Error: {str(e)}"
+
         return redirect('/admin')
 
     cursor.execute("SELECT * FROM routes")
@@ -150,7 +165,7 @@ def login():
             session['bus_id']=user[2]
             return redirect('/dashboard')
         else:
-            return "Invalid Login"
+            return "Invalid Login ❌"
 
     return render_template("login.html")
 
@@ -181,7 +196,7 @@ def driver_login():
             session['bus_id']=d[2]
             return redirect('/driver')
         else:
-            return "Invalid"
+            return "Invalid Login ❌"
 
     return render_template("driver_login.html")
 

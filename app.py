@@ -8,7 +8,7 @@ app.secret_key = "bus_tracking_secret_2026"
 # ---------------- DATABASE ----------------
 
 def init_db():
-    conn = sqlite3.connect("database.db")
+    conn = sqlite3.connect("bus_new.db")
     cursor = conn.cursor()
 
     cursor.execute("""

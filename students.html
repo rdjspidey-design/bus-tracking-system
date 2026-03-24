@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Student List</title>
+</head>
+
+<body>
+
+<h2>Student List</h2>
+
+<table border="1">
+
+<tr>
+<th>Name</th>
+<th>Register Number</th>
+<th>Bus</th>
+</tr>
+
+{% for s in students %}
+<tr>
+<td>{{ s[0] }}</td>
+<td>{{ s[1] }}</td>
+<td>{{ s[2] if s[2] else "Not Assigned" }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+<br>
+<a href="/admin">Back</a>
+
+</body>
+</html>
